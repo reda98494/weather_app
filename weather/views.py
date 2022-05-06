@@ -22,10 +22,10 @@ def index(request):
         periode = request.POST.get("select_station_periode")
         pays = request.POST.get("select_station_pays")
         if pays and station_name and periode:
-            # date = datetime.strptime(periode, "%B %d, %Y")
-            # date_off = datetime.strftime(date, "%Y-%m-%d")
+            date = datetime.strptime(periode, "%Y-%m-%d")
+            date_off = datetime.strftime(date, "%Y-%m-%d")
             try:
-                weather_get_data = Weather_data.objects.get(pays=pays, station_name=station_name, date=periode)
+                weather_get_data = Weather_data.objects.get(pays=pays, station_name=station_name, date=date_off)
                 return redirect('filtresMeteo', pk1=pays, pk2=station_name, pk3=periode)
             except:
                 return redirect('index')
@@ -40,9 +40,10 @@ def index(request):
 
 def filtresMeteo(request, pk1, pk2, pk3):
     weather_get_date = Weather_data.objects.get(pays=pk1, station_name=pk2, date=pk3)
-
+    weather_datas_chart = Weather_data.objects.filter(pays=pk1, station_name=pk2)
     context = {
-        "weather_get_date": weather_get_date
+        "weather_get_date": weather_get_date,
+        "weather_datas_chart": weather_datas_chart
     }
     return render(request, 'filtres_meteo.html', context)
 

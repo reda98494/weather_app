@@ -89,27 +89,57 @@
 </div>
 <div class="container mt-5 mb-5">
     <h3 class="mb-5">Evolution des température moyenne et du vent : </h3>
-    <canvas id="myChart" width="400" height="400"></canvas>
+    <div class="chart-container">
+        <canvas id="lineChartLogByKeyWordParDate" width="400" height="400"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="vent" width="400" height="400"></canvas>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="barChartLogByKeyWordParSoc" width="400" height="400"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="barChartLogByKeyWordParSoc1" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="barChartLogByKeyWordPar" width="400" height="400"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="barChartLogByKeyWordPar1" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
 
-    const myChart = new Chart('myChart', {
+    var chart = new Chart('lineChartLogByKeyWordParDate', {
         type: 'line',
         data: {
             labels: [
-                {#                {% for key in nb_logs_bykeyword_par_date %} '{{ key }}' ,{% endfor %}#}
+                {% for key in weather_datas_chart %} '{{ key.date }}' ,{% endfor %}
             ],
             datasets: [
                 {
-                    label: "Logs",
+                    label: "Evolution de la temperature en °",
                     data: [
-                        {#                        {% for key, value in nb_logs_bykeyword_par_date.items %}#}
-                        {#                            {x: '{{ key }}', y:'{{ value }}'},#}
-                        {#                        {% endfor %}#}
+                        {% for key in weather_datas_chart %}
+                            {x: '{{ key.date }}', y:'{{ key.tmp_measure_moy }}'},
+                        {% endfor %}
                     ],
                     borderColor: 'rgb(225,114,114)',
-
+                    {#backgroundColor: 'rgb(225,114,114)',#}
                 },
 
             ]
@@ -130,7 +160,7 @@
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Mois'
+                        labelString: 'Mois-année'
                     },
                     ticks: {
                         beginAtZero: true
@@ -140,7 +170,260 @@
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Evolution de la temperature'
+                        labelString: 'Temperature moyenne'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    var chart = new Chart('vent', {
+        type: 'line',
+        data: {
+            labels: [
+                {% for key in weather_datas_chart %} '{{ key.date }}' ,{% endfor %}
+            ],
+            datasets: [
+                {
+                    label: "Evolution de la vitesse du vent en km/h",
+                    data: [
+                        {% for key in weather_datas_chart %}
+                            {x: '{{ key.date }}', y:'{{ key.wind_measure_moy }}'},
+                        {% endfor %}
+                    ],
+                    borderColor: 'rgb(114,162,225)',
+                    {#backgroundColor: 'rgb(225,114,114)',#}
+                },
+
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Mois-année'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Vitesse du vent'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+
+    var chart = new Chart('barChartLogByKeyWordParSoc', {
+        type: 'bar',
+        data: {
+            labels: [{% for dt in weather_datas_chart %} '{{ dt.date }}' ,{% endfor %}],
+            datasets: [
+                {
+                    label : "Evolution des temperatures minimales par mois en °" ,
+                    data: [{% for dt in weather_datas_chart %} '{{ dt.tmp_measure_min }}',{% endfor %}],
+                    borderColor: ['rgb(29,15,227)'],
+                    backgroundColor: ['rgb(29,15,227)'],
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    var chart = new Chart('barChartLogByKeyWordParSoc1', {
+        type: 'bar',
+        data: {
+            labels: [{% for dt in weather_datas_chart %} '{{ dt.date }}' ,{% endfor %}],
+            datasets: [
+                {
+                    label : "Evolution des temperatures maximales par mois en °" ,
+                    data: [{% for dt in weather_datas_chart %} '{{ dt.tmp_measure_max }}', {% endfor %}],
+                    borderColor: ['rgb(210,16,16)'],
+                    backgroundColor: ['rgb(210,16,16)'],
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    var chart = new Chart('barChartLogByKeyWordPar', {
+        type: 'bar',
+        data: {
+            labels: [{% for dt in weather_datas_chart %} '{{ dt.date }}' ,{% endfor %}],
+            datasets: [
+                {
+                    label : "Evolution des vitesses de vent minimales par mois en km/h" ,
+                    data: [{% for dt in weather_datas_chart %} '{{ dt.wind_measure_min }}',{% endfor %}],
+                    borderColor: ['rgba(114,117,117,0.53)'],
+                    backgroundColor: ['rgba(114,117,117,0.53)'],
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    var chart = new Chart('barChartLogByKeyWordPar1', {
+        type: 'bar',
+        data: {
+            labels: [{% for dt in weather_datas_chart %} '{{ dt.date }}' ,{% endfor %}],
+            datasets: [
+                {
+                    label : "Evolution des vitesses de vent maximales par mois en km/h" ,
+                    data: [{% for dt in weather_datas_chart %} '{{ dt.wind_measure_max }}', {% endfor %}],
+                    borderColor: ['rgb(210,103,16)'],
+                    backgroundColor: ['rgb(210,103,16)'],
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: ''
                     },
                     ticks: {
                         beginAtZero: true
