@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>
+        WEATHER - |
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <link rel="stylesheet" href="/static/CSS/custom.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+    <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.2/esri-leaflet.js"></script>
+
+</head>
+<body>
+<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet-geocoder/0.0.1-beta.5/esri-leaflet-geocoder.js"></script>
+<link rel="stylesheet" type="text/css" href="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet-geocoder/0.0.1-beta.5/esri-leaflet-geocoder.css">
+<!--Navbar-->
+<nav class="navbar navbar-expand-md bg-dark navbar-dark" style="background-color: #5fa8ab !important">
+    <div class="container-fluid">
+        <a class="navbar-brand h3" href="{% url 'index' %}"><i class="fas fa-home"></i>  Accueil</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbar2SupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse text-center justify-content-end" id="navbar2SupportedContent">
+            <ul class="navbar-nav">
+            </ul>
+        </div>
+    </div>
+</nav>
+<!--Navbar-->
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 col-sm-6 col-xl-4 mb-4 card-container-tickets" style="width:50%;">
+            <div class="card border-0 shadow logs-card">
+                <div class="card card-flip-tickets" id="new">
+                    <div class="front card-block">
+                        <img src="/static/asset/temperature.png" class="rounded" width="20%" height="20%">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="card-text"><h5><i class="fas fa-temperature-high"></i> La température : </h5>
+                                    <h6>Moyenne : {{ weather_get_date.tmp_measure_moy }}° </h6>
+                                    <h6>Minimale : {{ weather_get_date.tmp_measure_min }}° </h6>
+                                    <h6>Maximale : {{ weather_get_date.tmp_measure_max }}° </h6>
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-4 mb-4 card-container-tickets" style="width:50%;">
+            <div class="card border-0 shadow logs-card">
+                <div class="card card-flip-tickets" id="new">
+                    <div class="front card-block">
+                        <img src="/static/asset/vent.png" class="rounded" width="20%" height="20%">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="card-text"><h5><i class="fa fa-wind"></i> La vitesse du vent : </h5>
+                                    <h6>Moyenne : {{ weather_get_date.wind_measure_moy }} km/h</h6>
+                                    <h6>Minimale : {{ weather_get_date.wind_measure_min }} km/h </h6>
+                                    <h6>Maximale : {{ weather_get_date.wind_measure_max }} km/h </h6>
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5 mb-5">
+    <h3 class="mb-5">Evolution des température moyenne et du vent : </h3>
+    <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+
+<script>
+
+    const myChart = new Chart('myChart', {
+        type: 'line',
+        data: {
+            labels: [
+                {#                {% for key in nb_logs_bykeyword_par_date %} '{{ key }}' ,{% endfor %}#}
+            ],
+            datasets: [
+                {
+                    label: "Logs",
+                    data: [
+                        {#                        {% for key, value in nb_logs_bykeyword_par_date.items %}#}
+                        {#                            {x: '{{ key }}', y:'{{ value }}'},#}
+                        {#                        {% endfor %}#}
+                    ],
+                    borderColor: 'rgb(225,114,114)',
+
+                },
+
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Mois'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Evolution de la temperature'
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+</body>
+</html>
+

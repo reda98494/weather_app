@@ -1,0 +1,17 @@
+img.rounded {
+    margin-top: 2%;
+    margin-left: 35%;
+    display: block
+}
+/*.card {*/
+/*    position: relative;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    min-width: 0;*/
+/*    word-wrap: break-word;*/
+/*    background-color: #fff;*/
+/*    background-clip: border-box;*/
+/*    border: 2px solid rgb(65 107 105 / 69%);*/
+/*    border-radius: 0.6rem;*/
+/*    box-shadow: 3px 3px #859490, -1em 0 0.4em #dddddd;*/
+/*}*/
